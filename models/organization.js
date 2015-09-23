@@ -12,15 +12,23 @@ var organizationSchema = new Schema({
   city: {type: String, required: 'Please enter your city'},
   street: {type: String, required: 'Please enter your street'},
   postCode: {type: String, required: 'Please enter your post code'},
+
   disableDate: {type: Date},
   created: {type: Date, default: Date.now}
 });
 
+
 var Organization = mongoose.model('Organization', organizationSchema);
+
 
 // Pre save validations
 organizationSchema.pre('save', function (next) {
     var self = this;
+    
+    if (!self.owner){
+      next(new Error("The organization must have an owner!"));
+    }
+      
     Organization.find({domain : self.domain, 'owner': self.owner}, function (err, results) {
       if (err){
             next(err, {success: false, message: "Organization search failed."});
@@ -33,6 +41,7 @@ organizationSchema.pre('save', function (next) {
         }
     });
 });
+
 
 module.exports = {
   Organization: Organization

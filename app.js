@@ -8,7 +8,6 @@ var mongoose = require('mongoose');
 
 var routes = require('./routes/index');
 var organizations = require('./routes/organizations');
-var organization-profiles = require('./routes/organization-profiles');
 
 var config = require('./bin/config');
 mongoose.connect(config.mongoUri);
@@ -28,8 +27,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
-app.use('/api/organizations', organizations);
-app.use('/api/org-profiles', organizationProfiles);
+app.use('/api/org', organizations);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

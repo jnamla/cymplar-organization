@@ -19,7 +19,7 @@ router.get('/create', function(req, res, next) {
 
 /* POST organization creation. */
 router.post('/create', function(req, res, next) {
-  organizationService.addOrganization(req.body.profile, req.body.organization, function(err, organization) {
+  organizationService.addOrganization(req.body.admin, req.body.organization, function(err, organization) {
     if (err) {
       console.log(err);
       res.status(500).json({success: false, error: "Create organization process failed."});
@@ -31,7 +31,7 @@ router.post('/create', function(req, res, next) {
 
 router.post('/update', function(req, res, next) {
   
-  organizationService.updateOrganization(req.body.profile, req.body.organization, function(err, organization) {
+  organizationService.updateOrganization(req.body.admin, req.body.organization, function(err, organization) {
     if (err) {
       console.log(err);
      res.status(500).json({success: false, error: "Update organization process failed."});
@@ -42,7 +42,7 @@ router.post('/update', function(req, res, next) {
 });
 
 router.post('/remove', function(req, res, next) {
-  organizationService.removeOrganization(req.body.profile, req.body.organization, function(err, result) {
+  organizationService.removeOrganization(req.body.admin, req.body.organization, function(err, result) {
     if (err) {
       console.log(err);
       res.status(500).json({success: false, error: "Delete organization process failed."});
@@ -55,13 +55,51 @@ router.post('/remove', function(req, res, next) {
 // Search organizations by filters
 router.post('/search', function(req, res, next) {
   
-  organizationService.findOrganization(req.body.profile, req.body.organization, function(err, foundCompanies) {
+  organizationService.findOrganization(req.body.admin, req.body.organization, function(err, foundCompanies) {
     if (err) {
       console.log(err);
       return res.status(500).json({error: 'Failed to retrieve organizations'});
     }
     
     res.json(foundCompanies);
+  });
+});
+
+
+/* POST organization profile creation. */
+router.post('/prof/create', function(req, res, next) {
+  organizationService.addOrganizationProfile(req.body.organization, req.body.profile, function(err, organization) {
+    if (err) {
+      console.log(err);
+      res.status(500).json({success: false, error: "Create organization profile process failed."});
+    }
+    //res.redirect('/contacts');
+    res.json(organization);
+  });
+});
+
+// Search organizations by profile filters
+router.post('/prof/search', function(req, res, next) {
+  
+  organizationService.findOrganizationProfile(req.body.organization, req.body.profile, function(err, foundProfiles) {
+    if (err) {
+      console.log(err);
+      return res.status(500).json({error: 'Failed to retrieve organizations'});
+    }
+    
+    res.json(foundProfiles);
+  });
+});
+
+router.post('/prof/update', function(req, res, next) {
+  
+  organizationService.updateOrganizationProfile(req.body.organization, req.body.profile, function(err, profile) {
+    if (err) {
+      console.log(err);
+     res.status(500).json({success: false, error: "Update organization process failed."});
+    }
+    //res.redirect('/contacts');
+    res.json(profile);
   });
 });
 
