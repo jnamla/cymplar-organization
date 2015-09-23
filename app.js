@@ -10,7 +10,7 @@ var routes = require('./routes/index');
 var organizations = require('./routes/organizations');
 
 var config = require('./bin/config');
-mongoose.connect(config.mongoUri);
+mongoose.connect(config.mongodb.uri);
 
 var app = express();
 
