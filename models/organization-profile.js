@@ -3,7 +3,7 @@ var Schema = mongoose.Schema;
 
 
 var organizationProfileSchema = new Schema({
-  organization:{type: mongoose.Schema.Types.ObjectId, ref:'Organization'}, // Unique identifier
+  organization:{type: mongoose.Schema.Types.ObjectId, ref:'Organization', index:{unique:true}}, // Unique identifier every organization has only one profile
   orgIndustry: {type: String, required: 'Please specify the industry'},
   bDescription: {type: String, required: 'Please enter a description'},
   teamSize: {type:Number, required: 'Please enter your team size'},

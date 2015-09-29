@@ -3,8 +3,6 @@ var OrganizationProfile = require('../models/organization-profile').Organization
   
 exports.addOrganization = function(admin, organization, next) {
   
-  // find the admin to link it with this organization
-  
   var newOrganization = new Organization({
     owner: admin,
     country: organization.country,
@@ -14,7 +12,8 @@ exports.addOrganization = function(admin, organization, next) {
     postCode: organization.postCode,
     domain: organization.domain,
     disableDate: organization.disableDate,
-    created: organization.created
+    created: organization.created,
+    name:organization.name
   });
   
   newOrganization.save(function(err, savedOrganization) {
@@ -113,7 +112,7 @@ exports.findOrganization = function(admin, filters, next) {
     
   conditions['disableDate'] = null;
   
-  conditions['owner'] = !admin._id ? admin._id : admin; // Add admin filter
+  conditions['owner'] = !admin._id ? admin : admin._id; // Add admin filter
   
   Organization.find(conditions, function(err, organizations) {
     if (err) {
@@ -141,9 +140,9 @@ exports.searchOrganizationName = function(name, next) {
 
 // ------------------------------------- Profile related activities -----------------------------------
 
-exports.addOrganizationProfile = function(orgQuery, organizationProfile, next) {
+exports.addOrganizationProfile = function(admin, organization, organizationProfile, next) {
   
-  this.findOrganizationBykey(orgQuery.owner, orgQuery, function (err, result) {
+  this.findOrganizationBykey(admin, organization, function (err, result) {
     if (err) {
       next(err, result);
     } 
@@ -181,9 +180,9 @@ exports.addOrganizationProfile = function(orgQuery, organizationProfile, next) {
   });
 };
 
-exports.updateOrganizationProfile = function(orgQuery, updatableData, next) {
+exports.updateOrganizationProfile = function(org, updatableData, next) {
 
-  OrganizationProfile.findOne({$or:[{_id: orgQuery.id},{organization: orgQuery.orgId}]}, function (err, result) {
+  OrganizationProfile.findOne({$or:[{_id: org.profile},{organization: org._id}]}, function (err, result) {
     if (err) {
       next(err, result);
     } 
@@ -195,7 +194,7 @@ exports.updateOrganizationProfile = function(orgQuery, updatableData, next) {
         delete updatableData["_id"];
         delete updatableData["organization"];
       
-        Organization.update({ _id: result.data._id}, {$set: updatableData}, function (err, updatedOrganizationProfile) {
+        OrganizationProfile.update({ _id: result._doc._id}, {$set: updatableData}, function (err, updatedOrganizationProfile) {
         if (!err) {
             return next(null, {success:true, data: updatedOrganizationProfile});
           }  
@@ -220,9 +219,9 @@ exports.findOrganizationProfile = function(organization, filters, next) {
   }
   
   conditions['disableDate'] = null;
-  conditions["organization"] = !organization._id ? organization._id : organization; // Add organization filter
+  conditions["organization"] = !organization._id ? organization : organization._id; // Add organization filter
   
-  OrganizationProfile.find(conditions).populate('organization').exec( function(err, profiles) {
+  OrganizationProfile.find(conditions).exec( function(err, profiles) {
     if (err) {
       next(err);
     } 

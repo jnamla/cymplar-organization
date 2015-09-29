@@ -5,7 +5,7 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
-
+var cors = require("cors"); // cors request
 var routes = require('./routes/index');
 var organizations = require('./routes/organizations');
 
@@ -25,7 +25,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-
+app.use(cors());
 app.use('/', routes);
 app.use('/api/org', organizations);
 
@@ -36,6 +36,13 @@ app.use(function(req, res, next) {
   next(err);
 });
 
+
+// CORS handlers
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
 // error handlers
 
 // development error handler
